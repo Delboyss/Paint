@@ -15,16 +15,19 @@ import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 @SuppressWarnings("serial")
 public class Janela extends JFrame {
 
-	JButton color = new JButton("Escolha a cor");
-	JButton abrir = new JButton("Abrir");
-	JButton save = new JButton("Salvar");
+	JButton corButton = new JButton("Escolha a cor");
+	JButton abrirButton = new JButton("Abrir");
+	JButton salvarButton = new JButton("Salvar");
 	JPanel panel = new JPanel();
+	JLabel jl = new JLabel();
 	Color cor = Color.BLACK;
 	JColorChooser paletaCores;
 	File file = null;
@@ -49,36 +52,43 @@ public class Janela extends JFrame {
 
 		getContentPane().setLayout(null);
 
-		color.setBounds(10, 80, 150, 25);
-		abrir.setBounds(0, 0, 150, 25);
-		save.setBounds(150, 0, 150, 25);
+		corButton.setBounds(10, 80, 150, 25);
+		abrirButton.setBounds(0, 0, 150, 25);
+		salvarButton.setBounds(150, 0, 150, 25);
 
 		c1 = new ComponenteDesenho(cor);
 
 		c1.setBounds(10, 130, 600, 420);
 
 		c1.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-		getContentPane().add(color);
-		getContentPane().add(abrir);
-		getContentPane().add(save);
+		getContentPane().add(corButton);
+		getContentPane().add(abrirButton);
+		getContentPane().add(salvarButton);
 		getContentPane().add(c1);
 
-		abrir.addActionListener(new ActionListener() {
+		/* ABRIR IMAGEM! */
+		abrirButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
+				FileNameExtensionFilter filtro = new FileNameExtensionFilter(
+						"Image Files", "jpeg", "jpg", "gif", "png", "bmp");
+				fc.setFileFilter(filtro);
 				int res = fc.showOpenDialog(null);
 
 				if (res == JFileChooser.APPROVE_OPTION) {
+
 					File arquivo = fc.getSelectedFile();
 					JOptionPane.showMessageDialog(null,
 							"Voce escolheu o arquivo: " + arquivo.getName());
-					BufferedImage img = null;
+
 					try {
-						img = ImageIO.read(arquivo);
-						Graphics carregarImg = img.getGraphics();
-						carregarImg.drawImage(img, 0, 0, null);
+
+						BufferedImage img = ImageIO.read(arquivo);
+						c1.setBi(img);
+						c1.repaint();
+
 					} catch (IOException error) {
 						error.printStackTrace();
 					}
@@ -88,25 +98,12 @@ public class Janela extends JFrame {
 			}
 		});
 
-		save.addActionListener(new ActionListener() {
+		/* SALVAR IMAGEM! */
+		salvarButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				/*
-				 * JFileChooser fc = new JFileChooser(); int res =
-				 * fc.showSaveDialog(null);
-				 * 
-				 * if (res == JFileChooser.APPROVE_OPTION) { File arquivo = new
-				 * File("savedimage." + ".jpg"); BufferedImage bi = new
-				 * BufferedImage(c1.getWidth(), c1.getHeight(),
-				 * BufferedImage.TYPE_INT_RGB); try { ImageIO.write(bi, ".jpg",
-				 * arquivo); } catch (IOException e1) { e1.printStackTrace(); }
-				 * JOptionPane.showMessageDialog(null, "O arquivo foi salvo " +
-				 * arquivo.getName()); } else
-				 * JOptionPane.showMessageDialog(null,
-				 * "Problema ao salvar o arquivo.");
-				 */
-				Rectangle r = getBounds();
+				Rectangle r = c1.getBounds();
 				int j = 0;
 				try {
 					BufferedImage i = new BufferedImage(r.width, r.height,
@@ -121,7 +118,8 @@ public class Janela extends JFrame {
 			}
 		});
 
-		color.addActionListener(new ActionListener() {
+		/* SELECIONAR COR! */
+		corButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {

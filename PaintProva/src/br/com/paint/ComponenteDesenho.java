@@ -8,6 +8,7 @@ import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import javax.swing.JComponent;
@@ -20,6 +21,15 @@ public class ComponenteDesenho extends JComponent implements MouseListener,
 	private int size = 8;
 	private int halfsize = size / 2;
 	private Color cor;
+	BufferedImage bi;
+
+	public BufferedImage getBi() {
+		return bi;
+	}
+
+	public void setBi(BufferedImage bi) {
+		this.bi = bi;
+	}
 
 	public ComponenteDesenho(Color cor) {
 		this.cor = cor;
@@ -37,7 +47,10 @@ public class ComponenteDesenho extends JComponent implements MouseListener,
 	}
 
 	@Override
-	protected void paintComponent(Graphics g) {
+	public void paintComponent(Graphics g) {
+		if (bi != null) {
+			g.drawImage(bi, 0, 0, null);
+		}
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setColor(Color.WHITE);
 		g2d.fillRect(0, 0, getWidth(), getHeight());
